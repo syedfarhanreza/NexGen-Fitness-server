@@ -1,23 +1,91 @@
-import { Request, Response } from "express";
+import httpStatus from "http-status";
+import catchAsync from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse";
 import { ProductServices } from "./product.service";
 
-const createProduct = async (req: Request, res: Response) => {
-  try {
-    const product = req.body.product;
+const createProducts = catchAsync(async (req, res) => {
+  const result = await ProductServices.createProductIntoDB(req.body);
 
-    const result = await ProductServices.createProductIntoDB(product);
-    // send response
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Product Created Successfully",
+    data: result,
+  });
+});
 
-    res.status(200).json({
-      success: true,
-      message: "Product is created successfully",
-      data: result,
+const getAllProducts = catchAsync(async (req, res) => {
+  const result = await ProductServices.getAllProductsFromDB(req.query);
+
+  if (result === null) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: "No Data Found",
+      data: [],
     });
-  } catch (err) {
-    console.log(err);
   }
-};
 
-export const ProductControllers = {
-  createProduct,
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Products retrieved successfully",
+    data: result,
+  });
+});
+
+const getSingleProduct = catchAsync(async (req, res) => {
+  const id = req.params.id;
+
+  const result = await ProductServices.getSingleProductFromDB(id);
+
+  if (result === null) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: "No Data Found!",
+      data: [],
+    });
+  }
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Product retrieved successfully",
+    data: result,
+  });
+});
+
+const updateProduct = catchAsync(async (req, res) => {
+  const id = req.params.id;
+
+  const result = await ProductServices.updateProductIntoDB(req.body, id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Product updated successfully",
+    data: result,
+  });
+});
+
+const deleteProduct = catchAsync(async (req, res) => {
+  const id = req.params.id;
+
+  const result = await ProductServices.deleteProductFromDB(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Product Deleted Successfully",
+    data: result,
+  });
+});
+
+export const productControllers = {
+  createProducts,
+  getAllProducts,
+  getSingleProduct,
+  updateProduct,
+  deleteProduct,
 };

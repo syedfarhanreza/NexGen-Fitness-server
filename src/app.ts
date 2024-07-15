@@ -1,16 +1,22 @@
-import express, { Application, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
-import { ProductRoutes } from "./app/modules/product/product.route";
-const app: Application = express();
+import router from "./app/routes";
+import globalErrorHandler from "./app/middlewares/globalErrorHandler";
+import notFound from "./app/middlewares/notFound";
 
-// parsers
+const app = express();
+
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
-app.use("/api/products", ProductRoutes);
+app.use("/api", router);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
+  res.send("Welcome to NextGen-Fitness");
 });
+
+app.use(globalErrorHandler);
+
+app.use(notFound);
 
 export default app;

@@ -1,9 +1,9 @@
 import httpStatus from "http-status";
+import { Product } from "./product.model";
+import { IProduct } from "./product.interface";
 import AppError from "../../errors/appError";
-import { IProduct } from "./products.interface";
-import { Product } from "./products.model";
 import QueryBuilder from "../../queryBuilder/QueryBuilder";
-import { productSearchableFields } from "./products.constant";
+import { productSearchableFields } from "./product.constant";
 
 const createProductIntoDB = async (payload: Partial<IProduct>) => {
   if (

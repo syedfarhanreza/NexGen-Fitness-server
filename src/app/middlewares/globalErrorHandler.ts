@@ -1,12 +1,12 @@
 import { ErrorRequestHandler } from "express";
 import { ZodError } from "zod";
 import config from "../config";
-import handleValidationError from "../errors/handleValidationError";
 import handleCastError from "../errors/handleCastError";
 import handleDuplicateError from "../errors/handleDuplicateError";
 import AppError from "../errors/appError";
 import { TErrorSources } from "../interface/globalErrorInterface";
 import handleZodValidationError from "../errors/handleZodValidationError";
+import handleValidationError from "../errors/handleValidationError";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {

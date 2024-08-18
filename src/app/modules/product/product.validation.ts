@@ -1,75 +1,31 @@
 import { z } from "zod";
 
-const createProductValidationSchema = z.object({
-  body: z.object({
-    name: z
-      .string({
-        required_error: "Product name is required",
-        invalid_type_error: "Product name must be a string",
-      })
-      .trim(),
-    price: z.number().min(0, "Price cannot be negative"),
-    stockQuantity: z.number().int().positive("Quantity cannot be negative"),
-    description: z
-      .string({
-        required_error: "Product description is required",
-        invalid_type_error: "Product description must be a string",
-      })
-      .trim(),
-    image: z.string(),
-    benefits: z.string({
-      required_error: "Product benefits is required",
-      invalid_type_error: "Product benefits must be a string",
-    }),
-    category: z
-      .string({
-        required_error: "Product category is required",
-        invalid_type_error: "Product category must be a string",
-      })
-      .trim(),
-  }),
+export const productValidationSchema = z.object({
+  image: z.string({ message: "image is required" }),
+  title: z.string({ message: "product title is required" }),
+  price: z
+    .number({ message: "product price is required as number" })
+    .positive(),
+  stock: z.number({ message: "product stock is required as number" }).min(0),
+  details: z.string({ message: "product details is required" }),
+  category: z.string({ message: "product category is required" }),
+  tag: z.string().optional(),
+});
+export const updateProductValidationSchema = z.object({
+  image: z.string().optional(),
+  title: z.string().optional(),
+  price: z.number().positive().optional(),
+  stock: z.number().min(0).optional(),
+  details: z.string().optional(),
+  category: z.string().optional(),
+  tag: z.string().optional(),
 });
 
-const updateProductValidationSchema = z.object({
-  body: z.object({
-    name: z
-      .string({
-        required_error: "Product name is required",
-        invalid_type_error: "Product name must be a string",
-      })
-      .trim()
-      .optional(),
-    price: z.number().min(0, "Price cannot be negative").optional(),
-    stockQuantity: z
-      .number()
-      .int()
-      .positive("Quantity cannot be negative")
-      .optional(),
-    description: z
-      .string({
-        required_error: "Product description is required",
-        invalid_type_error: "Product description must be a string",
-      })
-      .trim()
-      .optional(),
-    image: z.string().optional(),
-    benefits: z
-      .string({
-        required_error: "Product benefits is required",
-        invalid_type_error: "Product benefits must be a string",
-      })
-      .optional(),
-    category: z
-      .string({
-        required_error: "Product category is required",
-        invalid_type_error: "Product category must be a string",
-      })
-      .trim()
-      .optional(),
-  }),
+const confirmOrderValiationSchema = z.object({
+  quantity: z.number().int().positive(),
+  _id: z.string(),
 });
 
-export const ProductValidations = {
-  createProductValidationSchema,
-  updateProductValidationSchema,
-};
+export const productOrderBodySchema = z.object({
+  cartItems: z.array(confirmOrderValiationSchema),
+});

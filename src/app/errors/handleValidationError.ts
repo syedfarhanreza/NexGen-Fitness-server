@@ -1,28 +1,16 @@
 import mongoose from "mongoose";
-import {
-  TErrorSources,
-  TGenericErrorResponse,
-} from "../interface/globalErrorInterface";
-import httpStatus from "http-status";
+import { IErrorSources, IGenericErrorRes } from "../interface/error";
 
-const handleValidationError = (
-  err: mongoose.Error.ValidationError
-): TGenericErrorResponse => {
-  const statusCode = httpStatus.BAD_REQUEST;
-  const message = "Validation Error!";
+const handleValidationError = (err: mongoose.Error.ValidationError): IGenericErrorRes => {
+  const errorSources: IErrorSources = Object.values(err.errors).map((el) => {
+    return { path: el.path, message: el.message };
+  });
 
-  const errorSources: TErrorSources = Object.values(err.errors).map(
-    (value: mongoose.Error.ValidatorError | mongoose.Error.CastError) => {
-      return {
-        path: value?.path,
-        message: value?.message,
-      };
-    }
-  );
+  const statusCode = 400;
 
   return {
     statusCode,
-    message,
+    message: "Validation Error",
     errorSources,
   };
 };

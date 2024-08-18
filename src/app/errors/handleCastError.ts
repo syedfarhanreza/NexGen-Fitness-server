@@ -1,26 +1,19 @@
 import mongoose from "mongoose";
-import {
-  TErrorSources,
-  TGenericErrorResponse,
-} from "../interface/globalErrorInterface";
-import httpStatus from "http-status";
+import { IErrorSources, IGenericErrorRes } from "../interface/error";
 
-const handleCastError = (
-  err: mongoose.Error.CastError
-): TGenericErrorResponse => {
-  const statusCode = httpStatus.BAD_REQUEST;
-  const message = "Invalid input id";
-
-  const errorSources: TErrorSources = [
+const handleCastError = (err: mongoose.Error.CastError): IGenericErrorRes => {
+  const errorSources: IErrorSources = [
     {
-      path: err?.path,
-      message: err?.message,
+      path: err.path,
+      message: err.message,
     },
   ];
 
+  const statusCode = 400;
+
   return {
     statusCode,
-    message,
+    message: "Cast Error",
     errorSources,
   };
 };

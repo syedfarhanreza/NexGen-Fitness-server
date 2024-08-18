@@ -1,17 +1,21 @@
-import app from "./app";
-import config from "./app/config";
 import mongoose from "mongoose";
+import app from "./app";
+import Config from "./app/config";
 
-main().catch((err) => console.log(err));
+const port = process.env.PORT || 5000;
 
-async function main() {
+const startServer = async () => {
   try {
-    await mongoose.connect(config.database_url as string);
+    await mongoose.connect(Config.database_url as string);
+    console.log("Connected to MongoDB");
 
-    app.listen(config.port, () => {
-      console.log(`NextGen-Fitness app listening on port ${config.port}`);
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.error("Failed to connect to MongoDB", error);
+    process.exit(1);
   }
-}
+};
+
+startServer();

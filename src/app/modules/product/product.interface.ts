@@ -1,16 +1,15 @@
-import { Model } from "mongoose";
-
 export interface IProduct {
-  name: string;
-  price: number;
-  stockQuantity: number;
-  description: string;
   image: string;
-  tag?: string;
+  title: string;
+  price: number;
+  stock: number;
+  details: string;
   category: string;
-  isDeleted: boolean;
+  tag?: string;
 }
 
-export interface ProductModel extends Model<IProduct> {
-  isProductExists(name: string, description: string): Promise<IProduct | null>;
+export interface IProductOrder {
+  quantity: number;
+  _id: string;
 }
+

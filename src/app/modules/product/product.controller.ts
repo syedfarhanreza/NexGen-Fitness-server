@@ -1,91 +1,138 @@
-import httpStatus from "http-status";
-import catchAsync from "../../utils/catchAsync";
-import sendResponse from "../../utils/sendResponse";
-import { ProductServices } from "./product.service";
+import { catchAsyncError } from "../../../utils/catchAsyncError";
+import sendResponse from "../../../utils/sendResponse";
+import { IProductOrder } from "./product.interface";
+import Product from "./product.model";
+import productService from "./product.service";
 
-const createProducts = catchAsync(async (req, res) => {
-  const result = await ProductServices.createProductIntoDB(req.body);
+const {
+  createProductService,
+  getAllProductService,
+  getSingleProductService,
+  updateProductService,
+  deleteProductByIdService,
+  getFeaturedProductService,
+} = productService;
+
+export const createProduct = catchAsyncError(async (req, res) => {
+  const { body } = req;
+  const result = await createProductService(body);
 
   sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Product Created Successfully",
+    message: "product created successfully",
     data: result,
+    success: true,
   });
 });
+export const getAllProduct = catchAsyncError(async (req, res) => {
+  const { result, totalDoc } = await getAllProductService(req.query);
 
-const getAllProducts = catchAsync(async (req, res) => {
-  const result = await ProductServices.getAllProductsFromDB(req.query);
+  res.json({
+    success: true,
+    message: "successfully get all product",
+    data: result,
+    totalDoc,
+  });
+});
+export const getFeaturedProduct = catchAsyncError(async (req, res) => {
+  const result = await getFeaturedProductService(req.query);
+  sendResponse(res, {
+    success: true,
+    data: result,
+    message: "Successfully get featured products",
+  });
+});
+export const getSingleProduct = catchAsyncError(async (req, res) => {
+  const { id } = req.params;
 
-  if (result === null) {
+  const result = await getSingleProductService(id);
+
+  if (!result) {
     return sendResponse(res, {
       success: false,
-      statusCode: httpStatus.NOT_FOUND,
-      message: "No Data Found",
-      data: [],
+      data: null,
+      message: `No product found for ${id}`,
     });
   }
 
-  sendResponse(res, {
+  res.json({
     success: true,
-    statusCode: httpStatus.OK,
-    message: "Products retrieved successfully",
+    message: "successfully get product",
     data: result,
   });
 });
 
-const getSingleProduct = catchAsync(async (req, res) => {
-  const id = req.params.id;
-
-  const result = await ProductServices.getSingleProductFromDB(id);
-
-  if (result === null) {
+export const updateProductByIdController = catchAsyncError(async (req, res) => {
+  const { id } = req.params;
+  const isExist = await Product.findById(id);
+  if (!isExist) {
     return sendResponse(res, {
       success: false,
-      statusCode: httpStatus.NOT_FOUND,
-      message: "No Data Found!",
-      data: [],
+      data: null,
+      message: "Product not found",
+      statusCode: 404,
     });
   }
 
+  const result = await updateProductService(req.body, id);
   sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Product retrieved successfully",
     data: result,
+    success: true,
+    message: "Successfully product updated",
+  });
+});
+export const deleteProductByIdController = catchAsyncError(async (req, res) => {
+  const { id } = req.params;
+  const isExist = await Product.findById(id);
+  if (!isExist) {
+    return sendResponse(res, {
+      success: false,
+      data: null,
+      message: "Product not found",
+      statusCode: 404,
+    });
+  }
+
+  const result = await deleteProductByIdService(id);
+  sendResponse(res, {
+    data: result,
+    success: true,
+    message: "Successfully deleted product",
   });
 });
 
-const updateProduct = catchAsync(async (req, res) => {
-  const id = req.params.id;
+export const confirmManyProductOrderController = catchAsyncError(
+  async (req, res) => {
+    const cartItems = req.body.cartItems as IProductOrder[];
+    for (const item of cartItems) {
+      const product = await Product.findById(item._id);
 
-  const result = await ProductServices.updateProductIntoDB(req.body, id);
+      if (product) {
+        // Check if there is enough stock
+        if (product.stock >= item.quantity) {
+          product.stock -= item.quantity;
+          await product.save();
+        } else {
+          return sendResponse(res, {
+            message: `Not enough stock for ${product.title}`,
+            success: false,
+            data: null,
+            statusCode: 400,
+          });
+        }
+      } else {
+        return sendResponse(res, {
+          message: `Product ${item._id} not found`,
+          success: false,
+          data: null,
+          statusCode: 404,
+        });
+      }
+    }
 
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Product updated successfully",
-    data: result,
-  });
-});
-
-const deleteProduct = catchAsync(async (req, res) => {
-  const id = req.params.id;
-
-  const result = await ProductServices.deleteProductFromDB(id);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Product Deleted Successfully",
-    data: result,
-  });
-});
-
-export const productControllers = {
-  createProducts,
-  getAllProducts,
-  getSingleProduct,
-  updateProduct,
-  deleteProduct,
-};
+    sendResponse(res, {
+      data: null,
+      message: "successfully purchased products",
+      success: true,
+    });
+  }
+);

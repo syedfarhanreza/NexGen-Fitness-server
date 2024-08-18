@@ -1,9 +1,13 @@
-import { Schema, model } from "mongoose";
-import { IProduct, ProductModel } from "./product.interface";
+import mongoose, { Schema } from "mongoose";
+import { IProduct } from "./product.interface";
 
-const productSchema = new Schema<IProduct, ProductModel>(
+const productSchema = new Schema<IProduct>(
   {
-    name: {
+    image: {
+      type: String,
+      required: true,
+    },
+    title: {
       type: String,
       required: true,
     },
@@ -11,11 +15,11 @@ const productSchema = new Schema<IProduct, ProductModel>(
       type: Number,
       required: true,
     },
-    stockQuantity: {
+    stock: {
       type: Number,
       required: true,
     },
-    description: {
+    details: {
       type: String,
       required: true,
     },
@@ -23,30 +27,17 @@ const productSchema = new Schema<IProduct, ProductModel>(
       type: String,
       required: true,
     },
-    image: {
-      type: String,
-      required: true,
-    },
     tag: {
       type: String,
       default: "",
-      required: true,
+      required: false,
     },
   },
   {
     timestamps: true,
   }
 );
-productSchema.pre("find", function (next) {
-  this.find({ isDeleted: { $ne: true } });
-  next();
-});
 
-productSchema.statics.isProductExists = async function (
-  name: string,
-  description: string
-) {
-  return await Product.findOne({ name, description });
-};
+const Product = mongoose.model("Product", productSchema);
 
-export const Product = model<IProduct, ProductModel>("Product", productSchema);
+export default Product;

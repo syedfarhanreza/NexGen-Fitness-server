@@ -35,7 +35,6 @@ Create a `.env`  file in the root directory and add the following:
 NODE_ENV= development
 MONGO_URI=your_mongo_db_connection_string
 BCRYPT_SALT_ROUNDS= enter any rounds (ex- 8,12)
-JWT_ACCESS_SECRET= create your own secret token
 PORT=5000
 STRIPE_SK= your stripe secret key
 ```

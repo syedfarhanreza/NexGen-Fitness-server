@@ -7,9 +7,9 @@ const zod_1 = require("zod");
 const config_1 = __importDefault(require("../config"));
 const handleCastError_1 = __importDefault(require("../errors/handleCastError"));
 const handleDuplicateError_1 = __importDefault(require("../errors/handleDuplicateError"));
-const appError_1 = __importDefault(require("../errors/appError"));
 const handleZodValidationError_1 = __importDefault(require("../errors/handleZodValidationError"));
 const handleValidationError_1 = __importDefault(require("../errors/handleValidationError"));
+const AppError_1 = __importDefault(require("../errors/AppError"));
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const globalErrorHandler = (err, req, res, next) => {
     let statusCode = 500;
@@ -49,7 +49,7 @@ const globalErrorHandler = (err, req, res, next) => {
         errorSources = extractedError === null || extractedError === void 0 ? void 0 : extractedError.errorSources;
     }
     // throw new AppError validation
-    else if (err instanceof appError_1.default) {
+    else if (err instanceof AppError_1.default) {
         statusCode = err === null || err === void 0 ? void 0 : err.statusCode;
         message = err === null || err === void 0 ? void 0 : err.message;
         errorSources = [
@@ -63,7 +63,7 @@ const globalErrorHandler = (err, req, res, next) => {
         success: false,
         message,
         errorSources,
-        stack: config_1.default.NODE_ENV === "development" ? err.stack : null,
+        stack: config_1.default.nodeEnv === "development" ? err.stack : null,
     });
 };
 exports.default = globalErrorHandler;

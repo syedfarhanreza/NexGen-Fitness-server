@@ -13,7 +13,7 @@ export const stripe = new Stripe(process.env.STRIPE_SK as string);
 app.use(
   cors({
     origin: "*",
-  })
+  }),
 );
 app.use(express.json());
 app.use(morgan("dev"));

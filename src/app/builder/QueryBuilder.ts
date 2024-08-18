@@ -19,7 +19,7 @@ class QueryBuilder<T> {
           (field) =>
             ({
               [field]: { $regex: searchTerm, $options: "i" },
-            } as FilterQuery<T>)
+            }) as FilterQuery<T>,
         ),
       });
     }
@@ -68,7 +68,7 @@ class QueryBuilder<T> {
 
   async count() {
     const countQuery = this.modelQuery.model.countDocuments(
-      this.modelQuery.getFilter()
+      this.modelQuery.getFilter(),
     );
     this.totalCount = await countQuery.exec();
     return this;

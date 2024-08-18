@@ -55,7 +55,7 @@ const getFeaturedProductService = async (query: Record<string, unknown>) => {
 
 const updateProductService = async (
   payload: Partial<IProduct>,
-  productId: string
+  productId: string,
 ) => {
   const result = await Product.findByIdAndUpdate(productId, payload, {
     new: true,

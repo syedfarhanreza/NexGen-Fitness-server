@@ -3,10 +3,10 @@ import { ZodError } from "zod";
 import config from "../config";
 import handleCastError from "../errors/handleCastError";
 import handleDuplicateError from "../errors/handleDuplicateError";
-import AppError from "../errors/appError";
 import { TErrorSources } from "../interface/globalErrorInterface";
 import handleZodValidationError from "../errors/handleZodValidationError";
 import handleValidationError from "../errors/handleValidationError";
+import AppError from "../errors/AppError";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
@@ -68,7 +68,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     success: false,
     message,
     errorSources,
-    stack: config.NODE_ENV === "development" ? err.stack : null,
+    stack: config.nodeEnv === "development" ? err.stack : null,
   });
 };
 

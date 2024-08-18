@@ -134,5 +134,5 @@ export const confirmManyProductOrderController = catchAsyncError(
       message: "successfully purchased products",
       success: true,
     });
-  }
+  },
 );

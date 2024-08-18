@@ -12,4 +12,3 @@ export interface IProductOrder {
   quantity: number;
   _id: string;
 }
-
